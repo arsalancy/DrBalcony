@@ -49,7 +49,7 @@ class GetStart extends StatelessWidget {
           
               Container(
                   decoration:
-                      BoxDecoration(color: Color.fromARGB(255, 219, 219, 219)),
+                      const BoxDecoration(color: Color.fromARGB(255, 219, 219, 219)),
                   child: Padding(
                     padding: EdgeInsets.fromLTRB(10, 5 + barheight, 10, 5),
                     child: SizedBox(
@@ -72,26 +72,26 @@ class GetStart extends StatelessWidget {
                       style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: sw / 9.5,
-                          color: Color.fromARGB(221, 146, 75, 0)),
+                          color: const Color.fromARGB(221, 146, 75, 0)),
                     ),
                     Padding(
                       padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
                       child: SizedBox(
                         width: sw,
                         child: Container(
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                               color: Color.fromARGB(174, 66, 164, 245),
                               borderRadius: BorderRadius.only(
                                   topLeft: Radius.circular(15),
                                   topRight: Radius.circular(15))),
                           child: Padding(
-                            padding: EdgeInsets.all(8.0),
+                            padding: const EdgeInsets.all(8.0),
                             child: Text(
                               "30+ Years Of Experience",
                               style: TextStyle(
                                   fontWeight: FontWeight.w600,
                                   fontSize: sw / 20,
-                                  color: Color.fromARGB(255, 255, 255, 255)),
+                                  color: const Color.fromARGB(255, 255, 255, 255)),
                             ),
                           ),
                         ),
@@ -102,18 +102,18 @@ class GetStart extends StatelessWidget {
                       child: SizedBox(
                         width: sw,
                         child: Container(
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                               color: Color.fromARGB(174, 66, 164, 245),
                               borderRadius: BorderRadius.only(
                                   bottomLeft: Radius.circular(15),
                                   bottomRight: Radius.circular(15))),
                           child: Padding(
-                            padding: EdgeInsets.all(8.0),
+                            padding: const EdgeInsets.all(8.0),
                             child: Text(
                               "Engineering Balcony Inspection SB721 & SB326COMPLY\n WITH THE ORDINANCE EASY WITH A FREE CONSULTATION",
                               style: TextStyle(
                                   fontSize: sw / 25,
-                                  color: Color.fromARGB(255, 255, 255, 255)),
+                                  color: const Color.fromARGB(255, 255, 255, 255)),
                             ),
                           ),
                         ),

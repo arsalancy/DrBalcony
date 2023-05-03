@@ -57,6 +57,9 @@ Future<bool> _exitApp(BuildContext context) async {
 }
 
 class _WebViewState extends State<WebView> {
+  //int progrss=0;
+  final progrss = ValueNotifier<int>(0);
+
   // Future <XFile?>showImagePickerdialog()async{
   //   return showDialog<XFile>(context: context, builder: (BuildContext context) {
 
@@ -178,7 +181,8 @@ if (mounted) {
 
     controller
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setBackgroundColor(const Color(0x00000000))
+   
+      ..setBackgroundColor(Colors.transparent)
       ..setNavigationDelegate(
         NavigationDelegate(
            onNavigationRequest: (NavigationRequest request) {
@@ -199,14 +203,20 @@ bnb==false;
             debugPrint('allowing navigation to ${request.url}');
             return NavigationDecision.navigate;
           },
+          
           onProgress: (int progress) {
-            debugPrint('WebView is loading (progress : $progress%)');
+              progrss.value=progress;
+              
+         //   return LinearProgressIndicator()
+            //debugPrint('WebView is loading (progress : $progress%)');
           },
+          
           onPageStarted: (String url) {
             debugPrint('Page started loading: $url');
           },
           onPageFinished: (String url) {
             debugPrint('Page finished loading: $url');
+            progrss.value=100;
           },
           onWebResourceError: (WebResourceError error) {
             debugPrint('''
@@ -411,8 +421,11 @@ if (controller.platform is AndroidWebViewController) {
   });
 }
     return Scaffold(
-        appBar: AppBar(toolbarHeight: 0),
-        backgroundColor: Colors.transparent,
+        appBar: AppBar(toolbarHeight: 0
+        
+        ),
+    //  backgroundColor: Colors.transparent,
+    //primary: ,
         body: FutureBuilder(
           future: internetCheker(),
           builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
@@ -435,12 +448,35 @@ if (controller.platform is AndroidWebViewController) {
             //         }
             if (snapshot.hasData) {
               if (snapshot.data == true) {
-                return WebViewWidget(controller: _controller);
+                return Stack(
+                  children: 
+                    [WebViewWidget(controller: _controller
+                    
+                    ),
+                    Center(child: ValueListenableBuilder<int>(
+                      builder: (context, value, child) {return
+                 progrss.value<100?  Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                       // crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                       Padding(
+                         padding:  EdgeInsets.all(8.0),
+                         child:  Text("Loading" ,  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)
+                         ),
+                       ),
+
+                        CircularProgressIndicator.adaptive( value: progrss.value.toDouble()/10,)
+                      ],):Container();
+                      },
+                      valueListenable: progrss,
+                      ))
+                  ],
+                );
               } else if (snapshot.data == false) {
                 return const Nointernet();
               }
             }
-            return Container();
+            return const Center(child: CircularProgressIndicator.adaptive());
           },
           //child: WebViewWidget(controller: _controller)
         )
@@ -581,9 +617,7 @@ Future<dynamic> login(Username, Password) async {
   } 
   else {
       print(streamresponse.reasonPhrase);
-
     return "error";
-  
   }
 }
 // class  Auth {

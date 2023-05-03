@@ -20,7 +20,7 @@ children: [
     padding: EdgeInsets.all(10.0),
     child: Text(
         textAlign: TextAlign.center,
-                              "There is no internet connection",
+                              "There Is No Internet Connection",
                               style: TextStyle(
                                
                                   fontWeight: FontWeight.w600,
@@ -32,7 +32,7 @@ children: [
     padding: EdgeInsets.all(10.0),
     child: Text(
       textAlign: TextAlign.center,
-                            "please check your internet connection and try again.",
+                            "Please Check Your Internet Connection And Try Again.",
                             style: TextStyle(
                              
                                 fontWeight: FontWeight.w600,
