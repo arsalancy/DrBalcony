@@ -1,15 +1,13 @@
-
-
 import 'dart:io';
 
 import 'package:dr_balcony/nointernet.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
-import 'package:path_provider/path_provider.dart';
+//import 'package:flutter/src/widgets/framework.dart';
+//import 'package:flutter/src/widgets/placeholder.dart';
+//import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-import 'package:webview_flutter_android/webview_flutter_android.dart' ;
+import 'package:webview_flutter_android/webview_flutter_android.dart';
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
 import 'dart:async';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
@@ -17,7 +15,9 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:file_picker/file_picker.dart';
-import 'package:image/image.dart' as image;
+//import 'package:image/image.dart' as image;
+//import 'package:flutter_svg/flutter_svg.dart';
+
 class WebView extends StatefulWidget {
   final RouterBalcony webpage;
   const WebView({Key? key, required this.webpage}) : super(key: key);
@@ -27,8 +27,6 @@ class WebView extends StatefulWidget {
 }
 
 Future<bool> _exitApp(BuildContext context) async {
-
-
   late final PlatformWebViewControllerCreationParams params;
 
   // late final PlatformWebViewControllerCreationParams params;
@@ -59,7 +57,45 @@ Future<bool> _exitApp(BuildContext context) async {
 class _WebViewState extends State<WebView> {
   //int progrss=0;
   final progrss = ValueNotifier<int>(0);
+  final selectedIndex = ValueNotifier<int>(0);
+  final bnb = ValueNotifier<bool>(false);
+  final firstTimeLoad= ValueNotifier<bool>(true);
 
+
+
+
+
+String sendUlr(){
+          if (firstTimeLoad.value) {
+            firstTimeLoad.value=false;
+           return 'https://eeeadvisorproject.com/${widget.webpage.router}?mobile=1&v=$rand';
+          }
+           switch (selectedIndex.value) {
+        case 0:
+          {
+          
+           return 'https://eeeadvisorproject.com/user?mobile=1&v=$rand';
+           
+          }
+          
+        case 1:
+          {
+            
+              return  'https://eeeadvisorproject.com/user/projects?mobile=1&v=$rand';
+          }
+          
+        
+        case 2:
+          {
+         
+              return  'https://eeeadvisorproject.com/user/profile?mobile=1&v=$rand';
+          }
+         
+        default:
+        
+        return 'https://eeeadvisorproject.com/${widget.webpage.router}?mobile=1&v=$rand';
+      }
+       }
   // Future <XFile?>showImagePickerdialog()async{
   //   return showDialog<XFile>(context: context, builder: (BuildContext context) {
 
@@ -73,7 +109,7 @@ class _WebViewState extends State<WebView> {
   //       TextButton(onPressed: ()async {
   //         Navigator.pop(context,await ImagePicker().pickImage(source: ImageSource.camera));
   //       }, child: Text("From Camera")
-        
+
   //       )
   //     ]
   //   ); }
@@ -81,93 +117,88 @@ class _WebViewState extends State<WebView> {
   //   );
   // }
   //alternate
-Future <XFile?> Uploadimage()async{
-  final image= await ImagePicker().pickImage(source: ImageSource.gallery);
-return image;
-}
-
-
-
-
-Future <List<String>?>showImagePickerdialog64img()async{
-  List<String> base64list=[];
-    return showDialog<List<String>?>(context: context, builder: (BuildContext context) {
-
-       return AlertDialog(
-      title: const Text("Where Do You Want To Select Your Image From?"),
-      actions:[
-        TextButton(onPressed: ()async {
-        final image= await ImagePicker().pickMultiImage();
-         for (var i = 0; i < image.length; i++) {
-            String base64image=base64Encode(await image[i].readAsBytes());
-            base64list.add(base64image);
-         }
-        if (mounted) {
-   Navigator.pop(context,base64list);
-}
-        }, child: const Text("From Galary")
-        ),
-        TextButton(onPressed: ()async {
-       final image=await ImagePicker().pickImage(source: ImageSource.camera);
-String base64image=base64Encode(await image!.readAsBytes());
-base64list.add(base64image);
-if (mounted) {
-   Navigator.pop(context,base64list);
-}
-         
-        }, child: const Text("From Camera")
-        
-        )
-      ]
-    ); }
-
-    );
+  Future<XFile?> Uploadimage() async {
+    final image = await ImagePicker().pickImage(source: ImageSource.gallery);
+    return image;
   }
-  Future<void>sendimage(List<String>? images)async{
-    final logindata=await login("1", "1");
-      print(logindata);
 
-      //final token = Auth.fromJson(jsonDecode(logindata));
-       var token=logindata["access_token"];
-      print(token);
+  Future<List<String>?> showImagePickerdialog64img() async {
+    List<String> base64list = [];
+    return showDialog<List<String>?>(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+              title: const Text("Where Do You Want To Select Your Image From?"),
+              actions: [
+                TextButton(
+                    onPressed: () async {
+                      final image = await ImagePicker().pickMultiImage();
+                      for (var i = 0; i < image.length; i++) {
+                        String base64image =
+                            base64Encode(await image[i].readAsBytes());
+                        base64list.add(base64image);
+                      }
+                      if (mounted) {
+                        Navigator.pop(context, base64list);
+                      }
+                    },
+                    child: const Text("From Galary")),
+                TextButton(
+                    onPressed: () async {
+                      final image = await ImagePicker()
+                          .pickImage(source: ImageSource.camera);
+                      String base64image =
+                          base64Encode(await image!.readAsBytes());
+                      base64list.add(base64image);
+                      if (mounted) {
+                        Navigator.pop(context, base64list);
+                      }
+                    },
+                    child: const Text("From Camera"))
+              ]);
+        });
+  }
+
+  Future<void> sendimage(List<String>? images) async {
+    final logindata = await login("1", "1");
+    print(logindata);
+
+    //final token = Auth.fromJson(jsonDecode(logindata));
+    var token = logindata["access_token"];
+    print(token);
     for (var i = 0; i < images!.length; i++) {
-      Map<String,dynamic>jsondata={
-    "filebase64":images[i],
-    "fileid":"100"
-   };
-   String uRL="https://192.168.5.155:44332/webservice/document/upload";
-   http.post(Uri.parse(uRL),
-   body: jsonEncode(jsondata),
-   headers: {
-    'Authorization': 'Bearer $token',
-    "content-type":"application/json"}).then((respons) {
-    if (respons.statusCode==200) {
-      print(respons);
-      print("YAY");
+      Map<String, dynamic> jsondata = {
+        "filebase64": images[i],
+        "fileid": "100"
+      };
+      String uRL = "https://192.168.5.155:44332/webservice/document/upload";
+      http.post(Uri.parse(uRL), body: jsonEncode(jsondata), headers: {
+        'Authorization': 'Bearer $token',
+        "content-type": "application/json"
+      }).then((respons) {
+        if (respons.statusCode == 200) {
+          print(respons);
+          print("YAY");
+        } else {
+          print(respons.statusCode);
+          print("FAILED");
+        }
+      });
     }
-    else{
-      print(respons.statusCode);
-        print("FAILED");
-    }
-   });
-
-    }
-   
   }
-   int _selectedIndex = 0;
-  bool bnb=false;
+
   late final WebViewController _controller;
+  late final WebViewController _controller2;
   final ImagePicker picker = ImagePicker();
-  
+  late final PlatformWebViewControllerCreationParams params;
+  final struuid = const Uuid().v4();
+  late String rand;
   @override
   void initState() {
-    
-    var struuid = const Uuid().v4();
-    var rand = struuid.substring(0, 8);
-    
+    rand = struuid.substring(0, 8);
 
     super.initState();
-    late final PlatformWebViewControllerCreationParams params;
+
     if (WebViewPlatform.instance is WebKitWebViewPlatform) {
       params = WebKitWebViewControllerCreationParams(
         allowsInlineMediaPlayback: true,
@@ -178,45 +209,49 @@ if (mounted) {
     }
     final WebViewController controller =
         WebViewController.fromPlatformCreationParams(params);
+    // final WebViewController controllersvg =
+    //     WebViewController.fromPlatformCreationParams(params);
+    // controllersvg
+    //   ..setJavaScriptMode(JavaScriptMode.unrestricted)
+    //   ..setBackgroundColor(Colors.transparent)
+    //   ..loadFlutterAsset("assets/Animated_Logo.svg");
+
+    // _controller2 = controllersvg;
 
     controller
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
-   
       ..setBackgroundColor(Colors.transparent)
       ..setNavigationDelegate(
         NavigationDelegate(
-           onNavigationRequest: (NavigationRequest request) {
+          onNavigationRequest: (NavigationRequest request) {
             if (request.url.contains('user')) {
-              bnb=true;
-              setState(() {
-              });
+              bnb.value = true;
+
               //debugPrint('blocking navigation to ${request.url}');
-              
+
               return NavigationDecision.navigate;
-            }else{
-bnb==false;
-              setState(() {
-                
-              });
+            } 
+            else {
+              bnb.value = false;
             }
             
+
             debugPrint('allowing navigation to ${request.url}');
             return NavigationDecision.navigate;
           },
-          
           onProgress: (int progress) {
-              progrss.value=progress;
-              
-         //   return LinearProgressIndicator()
+            progrss.value = progress;
+
+            //   return LinearProgressIndicator()
             //debugPrint('WebView is loading (progress : $progress%)');
           },
-          
           onPageStarted: (String url) {
             debugPrint('Page started loading: $url');
           },
           onPageFinished: (String url) {
             debugPrint('Page finished loading: $url');
-            progrss.value=100;
+
+            progrss.value = 100;
           },
           onWebResourceError: (WebResourceError error) {
             debugPrint('''
@@ -227,7 +262,6 @@ Page resource error:
   isForMainFrame: ${error.isForMainFrame}
           ''');
           },
-         
         ),
       )
       ..addJavaScriptChannel(
@@ -238,20 +272,19 @@ Page resource error:
             case "PopOut":
               Navigator.of(context).pop();
               break;
-
-              // case "ShowBNB":
-              // setState(() {
-              //   bnb=true;
-              // });
-              // break;
-              // case"HideBNB":
-              //  setState(() {
-              //   bnb=false;
-              // });
-              // break;
+            // case "ShowBNB":
+            // setState(() {
+            //   bnb=true;
+            // });
+            // break;
+            // case"HideBNB":
+            //  setState(() {
+            //   bnb=false;
+            // });
+            // break;
             default:
           }
-        
+
 //           if (message.message.contains("PopOut")) {
 //             Navigator.of(context).pop();
 //             //   ScaffoldMessenger.of(context).showSnackBar(
@@ -263,264 +296,216 @@ Page resource error:
 //               bnb=false;
 //             });
 //           }
-          
+
 //           if (message.message.contains("ShowBNB")) {
 //             setState(() {
 //               bnb=true;
 //             });
 //           }
-          
         },
-        
       )
+      
       ..loadRequest(Uri.parse(
-          'https://eeeadvisorproject.com/${widget.webpage.router}?mobile=1&v=$rand')
-        
+        sendUlr()
+          // 'https://eeeadvisorproject.com/${widget.webpage.router}?mobile=1&v=$rand'
+          )
           );
+       
+       
 
-    if(bnb==true){
-     switch (_selectedIndex) {
 
-       case 1:{
-       controller.loadRequest(Uri.parse(
-          'https://eeeadvisorproject.com/home?mobile=1&v=$rand'));
-       }
-         break;
-  case 2:{
-       controller.loadRequest(Uri.parse(
-          'https://eeeadvisorproject.com/projects?mobile=1&v=$rand'));
-       }
-         break;
-          case 3:{
-       controller.loadRequest(Uri.parse(
-          'https://eeeadvisorproject.com/dashboard?mobile=1&v=$rand'));
-       }
-         break;
-          case 4:{
-       controller.loadRequest(Uri.parse(
-          'https://eeeadvisorproject.com/profile?mobile=1&v=$rand'));
-       }
-         break;
-       default:
-     }
+    // if (bnb.value == true) {
+      // switch (selectedIndex.value) {
+      //   case 1:
+      //     {
+      //       controller.loadRequest(Uri.parse(
+      //       'https://eeeadvisorproject.com/user?mobile=1&v=$rand'));
+      //     }
+      //     break;
+      //   case 2:
+      //     {
+      //       controller.loadRequest(Uri.parse(
+      //           'https://eeeadvisorproject.com/user/projects?mobile=1&v=$rand'));
+      //     }
+      //     break;
+        
+      //   case 3:
+      //     {
+      //       controller.loadRequest(Uri.parse(
+      //           'https://eeeadvisorproject.com/user/profile?mobile=1&v=$rand'));
+      //     }
+      //     break;
+      //   default:
+      // }
+    // }
 
-    }
-  
 //?ww
-  //    initFilePicker() async {
-  //   if (Platform.isAndroid) {
-  //     final androidController = (controller.platform
-  //         as AndroidWebViewController);
-  //     await androidController.setOnShowFileSelector(_androidFilePicker);
-  //   }
-  // }
-  
-if (controller.platform is AndroidWebViewController) {
+    //    initFilePicker() async {
+    //   if (Platform.isAndroid) {
+    //     final androidController = (controller.platform
+    //         as AndroidWebViewController);
+    //     await androidController.setOnShowFileSelector(_androidFilePicker);
+    //   }
+    // }
+
+    if (controller.platform is AndroidWebViewController) {
       (controller.platform as AndroidWebViewController).setOnShowFileSelector(
         (FileSelectorParams params) async {
-          FilePickerResult? fpr = await FilePicker.platform.pickFiles(dialogTitle: "Pick your Image",allowMultiple : true,type :FileType.image);
+          FilePickerResult? fpr = await FilePicker.platform.pickFiles(
+              dialogTitle: "Pick your Image",
+              allowMultiple: true,
+              type: FileType.image);
           if (fpr == null) {
             return [];
           }
-          List<String> paths = fpr.paths.where((e) => e != null).map((e) => 'file://${e!}').toList();
-          
+          List<String> paths = fpr.paths
+              .where((e) => e != null)
+              .map((e) => 'file://${e!}')
+              .toList();
+
           return paths;
         },
       );
     }
-//     if (controller.platform is  AndroidWebViewController) {
-//      AndroidWebViewController.enableDebugging(true);
-
-//    //final myAndroidController = controller.platform as AndroidWebViewController;
-   
-
-
-//   //       initFilePicker() async {
-//   //   if (Platform.isAndroid) {
-//   //     final androidController = (controller.platform
-//   //         as AndroidWebViewController);
-//   //     await androidController.setOnShowFileSelector(_androidFilePicker);
-//   //   }
-//   // }
-
-// //    Future<List<String>> _androidFilePicker(FileSelectorParams params) async {
-// //   if (params.acceptTypes.any((type) => type == 'image/*')) {
-// //     final picker =ImagePicker();
-// //     final photo = await picker.pickImage(source:ImageSource.camera);
-
-// //     if (photo == null) {
-// //       return [];
-// //     }
-
-// //     final imageData = await photo.readAsBytes();
-// //     final decodedImage = image.decodeImage(imageData)!;
-// //     final scaledImage = image.copyResize(decodedImage, width: 500);
-// //     final jpg = image.encodeJpg(scaledImage, quality: 90);
-
-// //     final filePath = (await getTemporaryDirectory()).uri.resolve(
-// //           './image_${DateTime.now().microsecondsSinceEpoch}.jpg',
-// //         );
-// //     final file = await File.fromUri(filePath).create(recursive: true);
-// //     await file.writeAsBytes(jpg, flush: true);
-
-// //     return [file.uri.toString()];
-// //   }
-
-// //   return [];
-// // }
-// //   myAndroidController.setOnShowFileSelector(_androidFilePicker);
-// //final data=FileSelectorParams(isCaptureEnabled: false, acceptTypes: ["*"], mode: FileSelectorMode.open);
-// //     myAndroidController.setOnShowFileSelector( (data) async {
-      
-// // // final file =await Uploadimage();
-// // // if (file!=null) {
-// // //   // myAndroidController.loadFile(file.path);
-// // //   return [file.path];
-// // // }else {
-// // //   return[];
-// // // }
-               
-// // // final selectedImg=await showImagePickerdialog64img();
-// // // print(selectedImg);
-// // //         return selectedImg!.first ; 
-// // // List<String> fileslist=[];
-// // // FilePickerResult? result = await FilePicker.platform.pickFiles(
-// // //   type: FileType.custom,
-// // //   allowedExtensions: ['jpg', 'png', 'jpeg'],
-// // // );
-// // // if (result!=null) {
-// // //   for (var i = 0; i < result.files.length; i++) {
-// // //      PlatformFile file = result.files[i];
-// // //      fileslist.add(file.path as String);
-// // //   }
-// // //   return fileslist;
-// // // }else{
-
-// // //   return [];
-// // // }
-
-
-// //     });
-
-//       (controller.platform as AndroidWebViewController)
-//           .setMediaPlaybackRequiresUserGesture(false);
-//     }
 
     _controller = controller;
   }
 
   @override
   Widget build(BuildContext context) {
-  
     var barheight = MediaQuery.of(context).viewPadding.top;
     var height = MediaQuery.of(context).size.height;
-    
-    void _onItemTapped(int index) {
-  setState(() {
-    _selectedIndex = index;
-  });
-}
+
+    void onItemTapped(int index) {
+      selectedIndex.value = index;
+      _controller.loadRequest(Uri.parse(
+        sendUlr()
+          // 'https://eeeadvisorproject.com/${widget.webpage.router}?mobile=1&v=$rand'
+          ));
+
+    }
+
     return Scaffold(
-        appBar: AppBar(toolbarHeight: 0
-        
-        ),
-    //  backgroundColor: Colors.transparent,
-    //primary: ,
-        body: FutureBuilder(
-          future: internetCheker(),
-          builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-            //         if(snapshot.connectionState==ConnectionState.waiting){
-            //           return  Column(
-            //             mainAxisAlignment: MainAxisAlignment.center,
-            //             crossAxisAlignment: CrossAxisAlignment.center,
-            //             children: const [Center(child: CircularProgressIndicator.adaptive()), Padding(
-            //   padding: EdgeInsets.all(10.0),
-            //   child: Text(
-            //       textAlign: TextAlign.center,
-            //                             "Please Wait",
-            //                             style: TextStyle(
+        appBar: AppBar(toolbarHeight: 0),
+        //  backgroundColor: Colors.transparent,
+        //primary: ,
 
-            //                                 fontWeight: FontWeight.w600,
-            //                                 fontSize: 22,
-            //                                 color: Color.fromARGB(255, 2, 12, 41)),
-            //                           ),
-            // ),],);
-            //         }
-            if (snapshot.hasData) {
-              if (snapshot.data == true) {
-                return Stack(
-                  children: 
-                    [WebViewWidget(controller: _controller
-                    
-                    ),
-                    Center(child: ValueListenableBuilder<int>(
-                      builder: (context, value, child) {return
-                 progrss.value<100?  Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                       // crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                       Padding(
-                         padding:  EdgeInsets.all(8.0),
-                         child:  Text("Loading" ,  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)
-                         ),
-                       ),
+        body:FutureBuilder(
+  future: internetCheker(),
+  builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+    // if (snapshot.connectionState == ConnectionState.waiting) {
+    //   // If the data is still loading, return a CircularProgressIndicator
+    //   return Center(
+    //     child: CircularProgressIndicator(),
+    //   );
+    // }
+      if (snapshot.hasError) {
+      // If an error occurred while loading the data, show an error message
+      return Center(
+        child: Text('An error occurred: ${snapshot.error}'),
+      );
+    } else {
+      // If the data has loaded successfully, check the result
+      if (snapshot.data == true) {
+        return WebViewWidget(controller: _controller);
+      } else {
+        return const Nointernet();
+      }
+    }
+  },
+),
+        //  FutureBuilder(
+        //   future: internetCheker(),
+        //   builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+        //             // if(snapshot.connectionState==ConnectionState.waiting){
+        //             //   return Center(
+        //             //     child: Padding(
+        //             //               padding: const EdgeInsets.symmetric(
+        //             //                   vertical: 50, horizontal: 50),
+        //             //               child: WebViewWidget(controller: _controller2),
+        //             //             ),
+        //             //   );}
+           
+        //     if (snapshot.connectionState==ConnectionState.done) {
+        //       if (snapshot.data == true) {
+        //         return WebViewWidget(controller: _controller);
+        //       } 
+        //       else if (snapshot.data == false) {
 
-                        CircularProgressIndicator.adaptive( value: progrss.value.toDouble()/10,)
-                      ],):Container();
-                      },
-                      valueListenable: progrss,
-                      ))
-                  ],
-                );
-              } else if (snapshot.data == false) {
-                return const Nointernet();
-              }
-            }
-            return const Center(child: CircularProgressIndicator.adaptive());
-          },
-          //child: WebViewWidget(controller: _controller)
-        )
-        ,bottomNavigationBar: bnb==true?BottomNavigationBar(
-           currentIndex: _selectedIndex,
-            
-  onTap: _onItemTapped,  
-  type: BottomNavigationBarType.fixed,
-    items: const <BottomNavigationBarItem>[
-       BottomNavigationBarItem(
-        icon: Icon(Icons.supervised_user_circle_sharp),
-        label: 'Profile',
-      ),
-      BottomNavigationBarItem(
-        
-        icon: Icon(Icons.dashboard),
-        label: 'Dashboard',
-      ),
-      BottomNavigationBarItem(
-        icon: Icon(Icons.work_rounded),
-        label: 'Projects',
-      ),
+        //         return const Nointernet();
+        //       }
+              
+        //     }
+        //    return CircularProgressIndicator ();
+      
+           
+        //   },
      
-      BottomNavigationBarItem(
-        icon: Icon(Icons.home),
-        label: 'Home',
-      ),
-    ],
-  ):null 
-       ,floatingActionButton: FloatingActionButton(
-        onPressed: () async{
-          final img= await showImagePickerdialog64img();
-          sendimage(img);
-         // final XFile? image =await showImagePickerdialog();
-        //  final List<String> base64imgs =await showImagePickerdialog();
-          //image process
-          // if (image!=null) {
-          //   String base64image=base64Encode(await image.readAsBytes());
-          // }
-        },
-        child: const Icon(Icons.camera_alt_rounded),
+        // ),
+        bottomNavigationBar: ValueListenableBuilder(
+          valueListenable:bnb,
+              builder: (BuildContext context, value, Widget? child) {
+                if (bnb.value==true) {
+                  
+                  return ValueListenableBuilder(
+                    builder: (BuildContext context, value, Widget? child) {
+                      return BottomNavigationBar(
+                    currentIndex: selectedIndex.value,
+                    onTap: onItemTapped,
+                    type: BottomNavigationBarType.fixed,
+                    items: const <BottomNavigationBarItem>[
+                       BottomNavigationBarItem(
+                        icon: Icon(Icons.dashboard),
+                        label: 'Dashboard',
+                      ),
+
+                      BottomNavigationBarItem(
+                        icon: Icon(Icons.work_rounded),
+                        label: 'Projects',
+                      ),
+                      BottomNavigationBarItem(
+                        icon: Icon(Icons.supervised_user_circle_sharp),
+                        label: 'Profile',
+                      ),
+                      // BottomNavigationBarItem(
+                      //   icon: Icon(Icons.home),
+                      //   label: 'Home',
+                      // ),
+                    ],
+                                  ); },
+                    valueListenable: selectedIndex,
+                    
+                  );
+                }
+                else{
+                  return Container(
+        height: 0,
+      );
+                }
+                // else{
+                 
+                // //  return Container();
+                // //here
+                // }
+                  },
+              
+            //  child: 
+            )
+            ,
+        floatingActionButton: FloatingActionButton(
+          onPressed: () async {
+            final img = await showImagePickerdialog64img();
+            sendimage(img);
+            // final XFile? image =await showImagePickerdialog();
+            //  final List<String> base64imgs =await showImagePickerdialog();
+            //image process
+            // if (image!=null) {
+            //   String base64image=base64Encode(await image.readAsBytes());
+            // }
+          },
+          child: const Icon(Icons.camera_alt_rounded),
         ));
   }
-  
 }
 
 class RouterBalcony {
@@ -530,6 +515,7 @@ class RouterBalcony {
 
 Future<bool> internetCheker() async {
   bool result = await InternetConnectionChecker().hasConnection;
+ // bool result2=await 
   if (result == true) {
     return true;
   } else {
@@ -590,7 +576,7 @@ Future<bool> internetCheker() async {
 //         return [file.uri.toString()];
 //       }
 //     } catch (e, s) {
-    
+
 //       return [];
 //     }
 //   }
@@ -609,14 +595,12 @@ Future<dynamic> login(Username, Password) async {
 
   if (streamresponse.statusCode == 200) {
     // print(await response.stream.bytesToString());
- var response = await http.Response.fromStream(streamresponse);
-  final result = jsonDecode(response.body) as Map<String, dynamic>;
+    var response = await http.Response.fromStream(streamresponse);
+    final result = jsonDecode(response.body) as Map<String, dynamic>;
 
-  return result;
-
-  } 
-  else {
-      print(streamresponse.reasonPhrase);
+    return result;
+  } else {
+    print(streamresponse.reasonPhrase);
     return "error";
   }
 }
@@ -626,14 +610,11 @@ Future<dynamic> login(Username, Password) async {
 //  final expire_in;
 //   Auth( this.token_type, this.access_token, this.expire_in);
 
-
 //   Auth.fromJson(Map<String, dynamic> json)
 //       : access_token = json['access_token'],
 //         token_type = json['token_type'],
 //         expire_in =json['expire_in'];
 
-
- 
 //   Map<String, dynamic> toJson() => {
 //         'access_token': access_token,
 //         'token_type': token_type,
