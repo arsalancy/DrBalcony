@@ -67,7 +67,7 @@ class _WebViewState extends State<WebView> {
 
 String sendUlr(){
           if (firstTimeLoad.value) {
-             //selectedout.value=false;
+             selectedout.value=false;
             firstTimeLoad.value=false;
            return 'https://eeeadvisorproject.com/${widget.webpage.router}?mobile=1&v=$rand';
           }
@@ -90,11 +90,11 @@ String sendUlr(){
           {
               selectedout.value=false;
        
-              return  'https://eeeadvisorproject.com/user?mobile=1&v=$rand#page=profile';
+              return  'https://eeeadvisorproject.com/user/profile?mobile=1&v=$rand#page=profile';
           }
          
         default:
-        selectedout.value=false;
+        
         return 'https://eeeadvisorproject.com/${widget.webpage.router}?mobile=1&v=$rand';
       }
        }
@@ -223,7 +223,7 @@ String sendUlr(){
 
     controller
       
-     
+
     //..currentUrl()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setBackgroundColor(Colors.transparent)
@@ -233,17 +233,12 @@ String sendUlr(){
 
              if (!request.url.contains('#page=project')&&!request.url.contains('#page=dashboard')
              &&!request.url.contains('#page=profile')) {
-                bnb.value = true;
-                  if (firstTimeLoad.value) {
-                    selectedout.value=true;
-                  }
-                 return NavigationDecision.navigate;
-             }else if(request.url.contains('#page=project')&&request.url.contains('#page=dashboard')
-             &&request.url.contains('#page=profile')){
-              bnb.value = true;
-               selectedout.value=false;
-               return NavigationDecision.navigate;
+                  selectedout.value=false;
+                  
+             }else{
+               selectedout.value=true;
              }
+
             if (request.url.contains('user')) {
               currentUrL.value= (await controller.currentUrl())!;
               print('we are loading : $currentUrL');
@@ -474,7 +469,7 @@ if (controller.platform is AndroidWebViewController) {
         sendUlr()
           // 'https://eeeadvisorproject.com/${widget.webpage.router}?mobile=1&v=$rand'
           ));
-
+      selectedout.value;
     }
 
     return Scaffold(
@@ -545,7 +540,7 @@ if (controller.platform is AndroidWebViewController) {
                   
                   return ValueListenableBuilder(
                     builder: (BuildContext context, value, Widget? child) {
-                      return  ValueListenableBuilder(
+                      return ValueListenableBuilder(
                         builder: (context, value, child) {
                        return  BottomNavigationBar(
                                           currentIndex:

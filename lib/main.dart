@@ -21,8 +21,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     
-    return const MaterialApp(
-      
+    return  MaterialApp(
+      theme: ThemeData(
+     textSelectionTheme: TextSelectionThemeData(
+        cursorColor: Colors.blue,
+        selectionColor: Colors.blue.shade400,
+        selectionHandleColor: Colors.blue,
+     ),
+   ),
       debugShowCheckedModeBanner: false,
       title: 'DrBalcony', home: GetStart(
       
