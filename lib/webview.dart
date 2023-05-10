@@ -58,9 +58,11 @@ class _WebViewState extends State<WebView> {
   //int progrss=0;
   final progrss = ValueNotifier<int>(0);
   final selectedIndex = ValueNotifier<int>(0);
+  
   final bnb = ValueNotifier<bool>(false);
   final firstTimeLoad= ValueNotifier<bool>(true);
  final currentUrL=ValueNotifier<String>('');
+  final counterSelectedout= ValueNotifier<int>(0);
  final selectedout= ValueNotifier<bool>(false);
   final showCamera= ValueNotifier<bool>(false);
 
@@ -234,9 +236,12 @@ String sendUlr(){
              if (!request.url.contains('#page=project')&&!request.url.contains('#page=dashboard')
              &&!request.url.contains('#page=profile')) {
                 bnb.value = true;
-                  if (firstTimeLoad.value) {
-                    selectedout.value=true;
-                  }
+                 if (counterSelectedout.value>=1) {
+                   selectedout.value=true;
+                   
+                 }
+                    counterSelectedout.value+=1;
+              
                  return NavigationDecision.navigate;
              }else if(request.url.contains('#page=project')&&request.url.contains('#page=dashboard')
              &&request.url.contains('#page=profile')){
