@@ -71,7 +71,7 @@ String sendUlr(){
           if (firstTimeLoad.value) {
              //selectedout.value=false;
             firstTimeLoad.value=false;
-           return 'https://eeeadvisorproject.com/${widget.webpage.router}?mobile=1&v=$rand';
+           return 'https://eeeadvisorproject.com/${widget.webpage.router}?mobile=1&v=$rand#page=dashboard';
           }
            switch (selectedIndex.value) {
         case 0:
@@ -97,7 +97,7 @@ String sendUlr(){
          
         default:
         selectedout.value=false;
-        return 'https://eeeadvisorproject.com/${widget.webpage.router}?mobile=1&v=$rand';
+        return 'https://eeeadvisorproject.com/${widget.webpage.router}?mobile=1&v=$rand#page=dashboard';
       }
        }
   // Future <XFile?>showImagePickerdialog()async{
@@ -402,13 +402,13 @@ if (controller.platform is AndroidWebViewController) {
       final result = await showDialog(
         context: context,
         builder: (BuildContext context) => AlertDialog(
-          title: Text('Select an image'),
+          title: const Text('Select an image'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
-                leading: Icon(Icons.photo_library),
-                title: Text('Select from gallery'),
+                leading: const Icon(Icons.photo_library,color: Colors.blue),
+                title: const Text('Select from gallery'),
                 onTap: () async {
                   Navigator.pop(context, await FilePicker.platform.pickFiles(
                     dialogTitle: "Pick your Image",
@@ -418,8 +418,8 @@ if (controller.platform is AndroidWebViewController) {
                 },
               ),
               ListTile(
-                leading: Icon(Icons.camera_alt),
-                title: Text('Take a photo'),
+                leading: const Icon(Icons.camera_alt,color: Colors.blue,),
+                title: const Text('Take a photo'),
                 onTap: () async {
                   Navigator.pop(context, await ImagePicker().getImage(source: ImageSource.camera));
                 },
@@ -555,6 +555,9 @@ if (controller.platform is AndroidWebViewController) {
                        return  BottomNavigationBar(
                                           currentIndex:
                                          selectedIndex.value,
+                                         unselectedFontSize: selectedout.value?15:14,
+                                         selectedFontSize: selectedout.value?14:15
+                                         ,
                                          selectedItemColor: selectedout.value?Colors.grey[600] : Colors.blue,
                                          unselectedItemColor: Colors.grey[600],
                                           onTap: onItemTapped,
@@ -568,6 +571,7 @@ if (controller.platform is AndroidWebViewController) {
                         BottomNavigationBarItem(
                           icon: Icon(Icons.work_rounded),
                           label: 'Projects',
+
                         ),
                         BottomNavigationBarItem(
                           icon: Icon(Icons.supervised_user_circle_sharp),

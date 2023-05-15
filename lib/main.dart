@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
      ),
    ),
       debugShowCheckedModeBanner: false,
-      title: 'DrBalcony', home: GetStart(
+      title: 'DrBalcony', home: const GetStart(
       
     ));
   }
