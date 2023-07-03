@@ -1,0 +1,70 @@
+{
+  "project_info": {
+    "project_number": "979647511982",
+    "project_id": "drbalcony-24e1d",
+    "storage_bucket": "drbalcony-24e1d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:979647511982:android:7c11b13449079a1c09dc3f",
+        "android_client_info": {
+          "package_name": "com.DrBalcony"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "979647511982-8lqmhatuvtg8ug3s6omvb801m8o5fgsu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.DrBalcony",
+            "certificate_hash": "5b9f285fadca0a09968bee0e695f7da0b9ed1a47"
+          }
+        },
+        {
+          "client_id": "979647511982-aij5rtpo4tr9l7s41odr2pgeae3ghp11.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.DrBalcony",
+            "certificate_hash": "f9a0f974f1184d021161f6285daa84c3dca89f1b"
+          }
+        },
+        {
+          "client_id": "979647511982-u8cu86vptgmm9k1uc9ornjsods609ped.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.DrBalcony",
+            "certificate_hash": "a4e0b1c663fe77ec504b973105693cae34582b40"
+          }
+        },
+        {
+          "client_id": "979647511982-18oonc3k7lidj9p28h81hnnpt2e9147q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCPqO5j0mjYb5ktoG26AxQdjoiotqpJbLw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "979647511982-18oonc3k7lidj9p28h81hnnpt2e9147q.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "979647511982-5jjrhh9ks72qk0d1fcv3pk4h6oig16lk.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.DrBalcony"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

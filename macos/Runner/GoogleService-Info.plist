@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>979647511982-o0t853p5nqooe7dagacpamgacssaftif.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.979647511982-o0t853p5nqooe7dagacpamgacssaftif</string>
+	<key>API_KEY</key>
+	<string>AIzaSyCUtEYS3SRmvVCzhk_x3lzMgfkJhdScDBA</string>
+	<key>GCM_SENDER_ID</key>
+	<string>979647511982</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.drBalcony</string>
+	<key>PROJECT_ID</key>
+	<string>drbalcony-24e1d</string>
+	<key>STORAGE_BUCKET</key>
+	<string>drbalcony-24e1d.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:979647511982:ios:da81f30d4b4a2f1709dc3f</string>
+</dict>
+</plist>

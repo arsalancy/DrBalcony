@@ -1,4 +1,4 @@
-package com.example.dr_balcony
+package com.eeeadvisor
 
 import io.flutter.embedding.android.FlutterActivity
 
