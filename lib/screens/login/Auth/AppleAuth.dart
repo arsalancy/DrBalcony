@@ -51,3 +51,7 @@ Future<String?> signInWithApple() async {
   await FirebaseAuth.instance.signInWithCredential(oauthCredential);
   return appleCredential.identityToken;
 }
+//--------------------------------------------------Doc--------------------------------------------------\\
+/*
+
+*/

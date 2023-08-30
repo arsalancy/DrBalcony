@@ -1,17 +1,19 @@
 import 'dart:convert';
 
-import 'package:DrBalcony/FileCampicker.dart';
-import 'package:DrBalcony/Auth/login_screen.dart';
-import 'package:DrBalcony/nointernet.dart';
-import 'package:DrBalcony/webviewUtils.dart';
+import 'package:DrBalcony/widgets/FileCampicker.dart';
+import 'package:DrBalcony/screens/login/login_screen.dart';
+import 'package:DrBalcony/screens/get_start/getStart.dart';
+import 'package:DrBalcony/widgets/nointernet.dart';
+import 'package:DrBalcony/screens/web_view/webviewUtils.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-//import 'package:uuid/uuid.dart';
+
 import 'dart:io' show Platform;
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
-//import 'dart:async';
+
 import 'package:flutter/cupertino.dart' as ios;
 import 'package:image_picker/image_picker.dart';
 
@@ -24,29 +26,6 @@ class WebView extends StatefulWidget {
   @override
   State<WebView> createState() => _WebViewState();
 }
-
-// Future<bool> _exitApp(BuildContext context) async {
-//   late final PlatformWebViewControllerCreationParams params;
-
-//   if (WebViewPlatform.instance is WebKitWebViewPlatform) {
-//     params = WebKitWebViewControllerCreationParams(
-//       allowsInlineMediaPlayback: true,
-//       mediaTypesRequiringUserAction: const <PlaybackMediaTypes>{},
-//     );
-//   } else {
-//     params = const PlatformWebViewControllerCreationParams();
-//   }
-//   WebViewController controllerGlobal =
-//       WebViewController.fromPlatformCreationParams(params);
-
-//   if (await controllerGlobal.canGoBack()) {
-//     // print("onwill goback");
-//     controllerGlobal.goBack();
-//     return Future.value(false);
-//   } else {
-//     return Future.value(false);
-//   }
-// }
 
 class _WebViewState extends State<WebView> {
   final selectedIndex = ValueNotifier<int>(0);
@@ -61,10 +40,6 @@ class _WebViewState extends State<WebView> {
   final tokener = ValueNotifier<String>('');
   late final PlatformWebViewControllerCreationParams params;
   List<BottomNavigationBarItem> barItems = [
-    // const BottomNavigationBarItem(
-    //   icon: Icon(Icons.dashboard_rounded),
-    //   label: 'Dashboard',
-    // ),
     const BottomNavigationBarItem(
       icon: ios.Icon(Icons.work_rounded),
       label: 'Projects',
@@ -84,10 +59,6 @@ class _WebViewState extends State<WebView> {
     if (selectedIndex.value == 1) {
       sendMessage("Profile");
     }
-    //await _controller.loadRequest(Uri.parse(sendUlr()));
-
-    //final url = await _controller.currentUrl();
-    //print("url is : $url");
   }
 
   PreferredSizeWidget getAppbar() {
@@ -96,35 +67,14 @@ class _WebViewState extends State<WebView> {
         padding: EdgeInsetsDirectional.only(bottom: 2),
         leading: ios.CupertinoButton(
           child: ios.Icon(color: Colors.grey[700], Icons.menu),
-          onPressed: () {
-            // sendMessage('OpenDrawer');
-          },
+          onPressed: () {},
         ),
-        //  IconButton(
-        //     splashColor: Colors.blue,
-        //     highlightColor: Colors.blue,
-        //     onPressed: () {
-        //       sendMessage('OpenDrawer');
-        //     },
-        //     icon: ios.Icon(color: Colors.grey[700], Icons.menu))
-        //,
-        // trailing: ios.CupertinoButton(
-        //     onPressed: () {
-        //       sendMessage('OpenProfile');
-        //     },
-        //     child: ios.Icon(color: Colors.grey[700], Icons.manage_accounts)),
-
         trailing: PopupMenuButton(
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20)
                   .copyWith(topRight: Radius.circular(0))),
-          //padding: EdgeInsets.all(10),
-          //  elevation: 10,
           color: Colors.grey.shade100,
           child: Container(
-            //alignment: Alignment.center,
-            // height: 45,
-            // width: 45,
             margin: EdgeInsets.only(right: 10),
             decoration: BoxDecoration(
                 boxShadow: [BoxShadow(blurRadius: 2, color: Colors.black45)],
@@ -132,29 +82,14 @@ class _WebViewState extends State<WebView> {
                 shape: BoxShape.circle),
             child: Icon(
               Icons.more_horiz_rounded,
-              //Icons.ios,
               color: Colors.grey,
             ),
           ),
-          // onSelected: (value) {
-          //   ScaffoldMessenger.of(context)
-          //       .showSnackBar(SnackBar(content: Text('$value item pressed')));
-          // },
           itemBuilder: (context) {
             return [
               PopupMenuItem(
                   onTap: () async {
                     signoutHandel(widget.webpage.token, context);
-
-                    // final signout = await killToken(widget.webpage.token);
-                    // if (signout) {
-                    //   await storage.deleteAll();
-                    //   Navigator.of(context).push(MaterialPageRoute(
-                    //     builder: (context) {
-                    //       return LoginScreen();
-                    //     },
-                    //   ));
-                    // }
                   },
                   value: 'Sign out',
                   child: Column(
@@ -185,13 +120,6 @@ class _WebViewState extends State<WebView> {
             ];
           },
         ),
-        //  IconButton(
-        //     splashColor: Colors.blue,
-        //     highlightColor: Colors.blue,
-        //     onPressed: () {
-        //       sendMessage('OpenProfile');
-        //     },
-        //     icon: ios.Icon(color: Colors.grey[700], Icons.manage_accounts)),
       );
     } else {
       return AppBar(
@@ -205,43 +133,22 @@ class _WebViewState extends State<WebView> {
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20)
                     .copyWith(topRight: Radius.circular(0))),
-            //padding: EdgeInsets.all(10),
-            //  elevation: 10,
             color: Colors.grey.shade100,
             child: Container(
-              //alignment: Alignment.center,
-              // height: 45,
-              // width: 45,
               margin: EdgeInsets.only(right: 10),
               decoration: BoxDecoration(
-                  //  boxShadow: [BoxShadow(blurRadius: 2, color: Colors.black45)],
                   color: const Color.fromARGB(0, 33, 149, 243),
                   shape: BoxShape.circle),
               child: Icon(
                 Icons.more_vert_rounded,
-                //Icons.ios,
                 color: const Color.fromARGB(255, 255, 255, 255),
               ),
             ),
-            // onSelected: (value) {
-            //   ScaffoldMessenger.of(context)
-            //       .showSnackBar(SnackBar(content: Text('$value item pressed')));
-            // },
             itemBuilder: (context) {
               return [
                 PopupMenuItem(
                     onTap: () async {
                       signoutHandel(widget.webpage.token, context);
-                      // final signout = await killToken(widget.webpage.token);
-                      // if (signout) {
-                      //   await storage.deleteAll();
-                      //   Navigator.pushAndRemoveUntil(
-                      //     context,
-                      //     MaterialPageRoute(
-                      //         builder: (context) => LoginScreen()),
-                      //     (route) => false,
-                      //   );
-                      // }
                     },
                     value: 'Sign out',
                     child: Column(
@@ -272,11 +179,6 @@ class _WebViewState extends State<WebView> {
               ];
             },
           ),
-          // IconButton(
-          //     onPressed: () {
-          //       sendMessage('OpenProfile');
-          //     },
-          //     icon: const Icon(Icons.manage_accounts)),
         ],
       );
     }
@@ -288,41 +190,17 @@ class _WebViewState extends State<WebView> {
   }
 
   String sendUlr() {
-    // if (firstTimeLoad.value) {
-    //firstTimeLoad.value = false;
-
-    return 'https://drbalcony.com/api/redirector';
-    // }
-    // switch (selectedIndex.value) {
-    //   case 0:
-    //     {
-    //       selectedout.value = false;
-    //       return 'https://eeeadvisorproject.com/user?mobile=1&v=${randgen()}#page=dashboard';
-    //     }
-
-    //   case 1:
-    //     {
-    //       selectedout.value = false;
-    //       return 'https://eeeadvisorproject.com/user?mobile=1&v=${randgen()}#page=project';
-    //     }
-
-    //   case 2:
-    //     {
-    //       selectedout.value = false;
-
-    //       return 'https://eeeadvisorproject.com/user?mobile=1&v=${randgen()}#page=profile';
-    //     }
-
-    //   default:
-    //     selectedout.value = false;
-    //     return 'https://drbalcony.site/api/redirector';
-    // }
+    if (Platform.isIOS) {
+      return 'https://drbalcony.com/api/redirector?platform=ios';
+    } else if (Platform.isAndroid) {
+      return 'https://drbalcony.com/api/redirector?platform=android';
+    } else {
+      return 'https://drbalcony.com/api/redirector';
+    }
   }
 
   @override
   void initState() {
-    //randgen();
-
     super.initState();
 
     if (WebViewPlatform.instance is WebKitWebViewPlatform) {
@@ -350,39 +228,7 @@ class _WebViewState extends State<WebView> {
               return NavigationDecision.navigate;
             }
 
-            //  else if (request.url.contains("logout")) {
-            //   signoutHandel(widget.webpage.token, context);
-            //   return NavigationDecision.prevent;
-            // }
-
             return NavigationDecision.navigate;
-
-            // if (!request.url.contains('#page=project') &&
-            //     !request.url.contains('#page=dashboard') &&
-            //     !request.url.contains('#page=profile')) {
-            //   bnb.value = true;
-            //   if (counterSelectedout.value >= 1) {
-            //     selectedout.value = true;
-            //   }
-            //   counterSelectedout.value += 1;
-            //   return NavigationDecision.navigate;
-            // } else if (request.url.contains('#page=project') &&
-            //     request.url.contains('#page=dashboard') &&
-            //     request.url.contains('#page=profile')) {
-            //   bnb.value = true;
-            //   selectedout.value = false;
-            //   return NavigationDecision.navigate;
-            // }
-            // if (request.url.contains('user')) {
-            //   currentUrL.value = (await controller.currentUrl())!;
-
-            //   bnb.value = true;
-
-            //   return NavigationDecision.navigate;
-            // } else {
-            //   bnb.value = false;
-            //   return NavigationDecision.navigate;
-            // }
           },
           onPageStarted: (String url) {
             debugPrint('Page started loading: $url');
@@ -427,7 +273,7 @@ class _WebViewState extends State<WebView> {
           await storage.write(key: 'token', value: tokener.value);
 
           String? apiAuth = await storage.read(key: 'apiAuth');
-          // String? token = await storage.read(key: 'token');
+
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(
@@ -448,8 +294,28 @@ class _WebViewState extends State<WebView> {
           }, "user Already registerd", true);
         }
         if (decodedData['type'] == "functionality" &&
+            decodedData['value'] == "JumpLogin") {
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => LoginScreen()),
+            (route) => false,
+          );
+        }
+        if (decodedData['type'] == "functionality" &&
             decodedData['value'] == "tokenExpired") {
           signoutHandel(widget.webpage.token, context);
+        }
+        if (decodedData['type'] == "functionality" &&
+            decodedData['value'] == "deleteAccount") {
+          ShowDialogBox(context, "Are You sure about deleting your account?",
+              () {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => GetStart()),
+              (route) => false,
+            );
+            sendMessage("ConfirmDeleteAccount");
+          }, "Delete Account notice", true);
         }
       },
     );
@@ -457,13 +323,11 @@ class _WebViewState extends State<WebView> {
     if (controller.platform is AndroidWebViewController) {
       (controller.platform as AndroidWebViewController).setOnShowFileSelector(
         (FileSelectorParams params) async {
-          // Show options for selecting image from gallery or capturing a new image using camera
           final result = await showDialog(
             context: context,
             builder: (BuildContext context) => const FileCamPicker(),
           );
 
-          // Return selected file(s) to the web page
           if (result is PickedFile) {
             return ['file://${result.path}'];
           } else if (result is FilePickerResult) {
@@ -472,7 +336,7 @@ class _WebViewState extends State<WebView> {
                 .map((e) => 'file://${e!}')
                 .toList();
           } else {
-            return [];
+            return ['file://${result}'];
           }
         },
       );
@@ -480,8 +344,6 @@ class _WebViewState extends State<WebView> {
 
     _controller = controller;
   }
-  // var barheight = MediaQuery.of(context).viewPadding.top;
-  // var height = MediaQuery.of(context).size.height;
 
   @override
   Widget build(BuildContext context) {
@@ -489,58 +351,13 @@ class _WebViewState extends State<WebView> {
       onWillPop: () async {
         if (await _controller.canGoBack()) {
           sendMessage("back");
-          //_controller.goBack();
+
           return false;
         } else {
           return true;
         }
       },
       child: Scaffold(
-        // floatingActionButton: FloatingActionButton(
-        //   onPressed: () {
-        //     showModalBottomSheet<void>(
-        //       context: context,
-        //       builder: (BuildContext context) {
-        //         return Container(
-        //           height: 500,
-        //           color: const Color.fromARGB(255, 248, 248, 246),
-        //           child: Center(
-        //             child: Column(
-        //               mainAxisAlignment: MainAxisAlignment.center,
-        //               mainAxisSize: MainAxisSize.min,
-        //               children: <Widget>[
-        //                 const Expanded(
-        //                   child: TextField(
-        //                     maxLines: null,
-        //                     expands: true,
-        //                   ),
-        //                 )
-        //                 // const Text('Modal BottomSheet'),
-        //                 ,
-        //                 ElevatedButton(
-        //                   child: const Text('send'),
-        //                   onPressed: () => Navigator.pop(context),
-        //                 ),
-        //               ],
-        //             ),
-        //           ),
-        //         );
-        //       },
-        //     );
-        //   },
-        // ),
-        // appBar: PreferredSize(
-        //     preferredSize: const Size.fromHeight(50),
-        //     child: ValueListenableBuilder(
-        //       valueListenable: bnb,
-        //       builder: (BuildContext context, dynamic value, Widget? child) {
-        //         return getAppbar();
-        //       },
-        //     ))
-
-        // // //  AppBar(actions: []),
-        // // ,
-        // ,
         body: FutureBuilder(
           future: internetCheker(),
           builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
@@ -559,17 +376,6 @@ class _WebViewState extends State<WebView> {
             }
           },
         ),
-
-        //  bottomNavigationBar:ios.CupertinoTabBar(items: const <BottomNavigationBarItem>[
-        //     BottomNavigationBarItem(
-        //       icon: Icon(ios.CupertinoIcons.star_fill),
-        //       label: 'Favorites',
-        //     ),
-        //     BottomNavigationBarItem(
-        //       icon: Icon(ios.CupertinoIcons.clock_solid),
-        //       label: 'Recents',
-        //     ),],)
-
         bottomNavigationBar: ValueListenableBuilder(
           valueListenable: bnb,
           builder: (BuildContext context, value, Widget? child) {
@@ -579,27 +385,14 @@ class _WebViewState extends State<WebView> {
                   if (Platform.isAndroid) {
                     return BottomNavigationBar(
                         currentIndex: selectedIndex.value,
-                        // unselectedFontSize: selectedout.value ? 15 : 14,
-                        // selectedFontSize: selectedout.value ? 14 : 15,
-                        // selectedItemColor: selectedout.value
-                        //     ? Colors.grey[500]
-                        //     : Colors.blue,
-                        // unselectedItemColor: Colors.grey[500],
                         onTap: onItemTapped,
                         type: BottomNavigationBarType.fixed,
                         items: barItems);
                   } else {
                     return ios.CupertinoTabBar(
                         currentIndex: selectedIndex.value,
-
-                        //   unselectedFontSize: selectedout.value ? 15 : 14,
-                        // selectedFontSize: selectedout.value ? 14 : 15,
-                        // activeColor: selectedout.value
-                        //     ? Colors.grey[500]
-                        //     : Colors.blue,
                         inactiveColor: Colors.grey[500]!,
                         onTap: onItemTapped,
-                        // type: BottomNavigationBarType.fixed,
                         items: barItems);
                   }
                 },
@@ -611,10 +404,46 @@ class _WebViewState extends State<WebView> {
               );
             }
           },
-
-          //  child:
         ),
       ),
     );
   }
 }
+
+
+
+//--------------------------------------------------Doc--------------------------------------------------\\
+/*
+This code is implementing a Flutter webview to display a web application inside the mobile app.
+
+Some key things it is doing:
+
+- Importing necessary packages like webview_flutter, file picker etc.
+
+- Defining a WebView widget class that will hold the webview controller and handle interactions
+
+- Creating a WebView controller and setting properties like js mode, navigation delegate etc
+
+- Loading the initial URL with parameters like token
+
+- Adding a JavaScript channel to handle messages from the web app
+
+- Handling events like page load, errors etc using the navigation delegate
+
+- Providing file picking functionality for Android
+
+- Building the UI with the actual WebView widget, app bar, bottom nav bar
+
+- Handling back button presses, showing a connectivity error
+
+- Passing data between Flutter and web app using the JS channel
+
+So in summary, it is implementing a full-fledged webview that can:
+
+- Load and display a responsive web application
+- Handle file/image uploads
+- Pass data/messages between webview and Flutter code
+- Integrate with native features like connectivity, auth etc
+
+This allows building hybrid mobile apps by combining a web frontend with native Flutter functionality.
+*/
