@@ -56,7 +56,8 @@ Here's a breakdown of what the code does:
    - `hintStyle`: Sets the style of the hint text. The style is obtained from the `headlineMedium` property of the current theme's text theme.
    - `helperStyle`: Sets the style of the helper text. The style is obtained from the `headlineMedium` property of the current theme's text theme.
    - `errorStyle`: Sets the style of the error text. The style is obtained from the `displayMedium` property of the current theme's text theme.
-
+   - `filled`: specifies that the input field. the color is obtained from the teritiary contanaier.
+   - `` 
 1. The `inputTheme` function returns the configured `InputDecoration` object.
 
 This code provides a reusable function to define a consistent input field appearance throughout the application by customizing various properties of the `InputDecoration`.

@@ -78,7 +78,8 @@ class Nointernet extends StatelessWidget {
 
 //--------------------------------------------------Doc--------------------------------------------------\\
 /*
-this code defines a Flutter StatelessWidget called Nointernet. This widget represents a screen that is displayed when there is no internet connection. Here's what the code does:
+this code defines a Flutter StatelessWidget called Nointernet.
+ This widget represents a screen that is displayed when there is no internet connection. Here's what the code does:
 
 Imports: The code imports various Dart packages and local files required for the functionality implemented in the code. These imports include package:DrBalcony/getStart.dart, package:DrBalcony/webview.dart, package:DrBalcony/webviewUtils.dart, and package:flutter/material.dart. These packages and files are necessary for defining the Flutter widgets and accessing resources.
 
