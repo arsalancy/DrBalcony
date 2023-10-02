@@ -154,6 +154,7 @@ class GetStart extends StatelessWidget {
                             ios.Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: ImageCompareSlider(
+                                dividerColor: Theme.of(context).primaryColor,
                                 fillHandle: true,
                                 itemOne: Image.asset("assets/newBalcony.jpg"),
                                 itemTwo: Image.asset("assets/oldBalcony.png"),
@@ -164,8 +165,7 @@ class GetStart extends StatelessWidget {
                               child: ios.Padding(
                                 padding: const EdgeInsets.only(top: 20.0),
                                 child: ios.CupertinoButton(
-                                  color:
-                                      Theme.of(context).colorScheme.secondary,
+                                  color: Theme.of(context).colorScheme.primary,
                                   onPressed: () {
                                     Navigator.of(context)
                                         .push(ios.CupertinoPageRoute(
@@ -186,8 +186,7 @@ class GetStart extends StatelessWidget {
                               child: ios.SizedBox(
                                 width: sw / 1.5,
                                 child: ios.CupertinoButton(
-                                  color:
-                                      Theme.of(context).colorScheme.secondary,
+                                  color: Theme.of(context).colorScheme.primary,
                                   onPressed: () async {
                                     String? apiAuth =
                                         await storage.read(key: 'apiAuth');

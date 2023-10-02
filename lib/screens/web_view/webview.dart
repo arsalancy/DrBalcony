@@ -1,5 +1,9 @@
+import 'dart:async';
 import 'dart:convert';
 
+import 'package:DrBalcony/provider/copyStatus_provider.dart';
+import 'package:DrBalcony/provider/upload_provider.dart';
+import 'package:DrBalcony/repository/sqlite.dart';
 import 'package:DrBalcony/widgets/FileCampicker.dart';
 import 'package:DrBalcony/screens/login/login_screen.dart';
 import 'package:DrBalcony/screens/get_start/getStart.dart';
@@ -8,8 +12,10 @@ import 'package:DrBalcony/screens/web_view/webviewUtils.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:provider/provider.dart';
 
-import 'dart:io' show Platform;
+import 'dart:io' show Directory, File, Platform;
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
@@ -28,6 +34,7 @@ class WebView extends StatefulWidget {
 }
 
 class _WebViewState extends State<WebView> {
+  late Timer _timer;
   final selectedIndex = ValueNotifier<int>(0);
   final bnb = ValueNotifier<bool>(false);
   final firstTimeLoad = ValueNotifier<bool>(true);
@@ -200,8 +207,18 @@ class _WebViewState extends State<WebView> {
   }
 
   @override
+  void dispose() {
+    _timer.cancel();
+    // TODO: implement dispose
+    super.dispose();
+  }
+
+  @override
   void initState() {
     super.initState();
+    deleteInvalidDirectories();
+    //residualDocsSender();
+    startResidualDocsSender();
 
     if (WebViewPlatform.instance is WebKitWebViewPlatform) {
       params = WebKitWebViewControllerCreationParams(
@@ -268,6 +285,166 @@ class _WebViewState extends State<WebView> {
         if (decodedData['type'] == "token") {
           tokener.value = decodedData['value'];
         }
+        // if (decodedData['type'] == "functionality" &&
+        //     decodedData['value'] == "submitId") {
+        //   await storage.write(key: 'submitId', value: decodedData['value']);
+        // }
+        if (decodedData['type'] == "submitId") {
+          await deleteSpecificDirectory(decodedData['value']);
+          final copyState =
+              Provider.of<CopyingProcessState>(context, listen: false);
+          await storage.write(key: 'submitId', value: decodedData['value']);
+          // final valueNotifier =
+          //     ValueNotifier<bool>(false); // Track the copying process state
+
+          // copyState.stopCopying();
+          final result = await showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return FileCamPicker();
+              });
+
+          // final result = await showDialog(
+          //   context: context,
+          //   builder: (BuildContext context) {
+          //     return ValueListenableBuilder<bool>(
+          //       valueListenable: valueNotifier,
+          //       builder: (BuildContext context, bool isCopying, _) {
+          //         if (isCopying) {
+          //           return AlertDialog(
+          //             content: Center(child: CircularProgressIndicator()),
+          //           );
+          //         } else {
+          //           return FileCamPicker();
+          //         }
+          //       },
+          //     );
+          //   },
+          // );
+          if (result is PickedFile) {
+            // copyState.startCopying();
+            //    valueNotifier.value = true;
+            String? submitId = await storage.read(key: 'submitId');
+            DBHelper dbHelper = DBHelper();
+            await dbHelper.insertProject(int.parse(submitId!), result.path, 0);
+            try {
+              await copyFilesToFolder(submitId!, [result.path].toList());
+            } catch (e) {
+              print("we cannot copy $e");
+            } finally {
+              copyState.stopCopying();
+              //  valueNotifier.value = false;
+            }
+            // final isSent =
+            //     await UploadDocs(tokener.value!, submitId, result.path);
+            // if (isSent) {
+            //   dbHelper.deleteProject(int.parse(submitId!));
+            // }
+            //we must insure we send the media to call delete
+            // return ['file://${result.path}'];
+          } else if (result is FilePickerResult) {
+            // copyState.startCopying();
+            // copyState.startCopying();
+            // valueNotifier.value = true;
+            String? submitId = await storage.read(key: 'submitId');
+            DBHelper dbHelper = DBHelper();
+            final paths = result.paths;
+            // .where((e) => e != null)
+            // .map((e) => 'file://${e!}')
+            // .toList();
+            final intsub = int.parse(submitId!);
+            try {
+              await copyFilesToFolder(submitId!, paths);
+            } catch (e) {
+              print('we cannot copy $e');
+            }
+            // finally {
+
+            // }
+            for (var path in paths) {
+              try {
+                await dbHelper.insertProject(intsub!, path!, 0);
+              } catch (e) {
+                print("cannot insert to db cuz $e");
+              }
+              //  }
+            }
+            copyState.stopCopying();
+          }
+        }
+        if (decodedData['type'] == "functionality" &&
+            decodedData['value'] == "formSubmitted") {
+          await residualDocsSender();
+          //  testFetchResiduals();
+          await deleteInvalidDirectories();
+        }
+        // if (decodedData['type'] == "functionality" &&
+        //     decodedData['value'] == "inputFileClicked") {
+        //   final result = await showDialog(
+        //     context: context,
+        //     builder: (BuildContext context) => const FileCamPicker(),
+        //   );
+
+        //   if (result is PickedFile) {
+        //     String? submitId = await storage.read(key: 'submitId');
+        //     DBHelper dbHelper = DBHelper();
+        //     await dbHelper.insertProject(int.parse(submitId!), result.path, 0);
+        //     await copyFilesToFolder(submitId!, [result.path].toList());
+        //     // final isSent =
+        //     //     await UploadDocs(tokener.value!, submitId, result.path);
+        //     // if (isSent) {
+        //     //   dbHelper.deleteProject(int.parse(submitId!));
+        //     // }
+        //     //we must insure we send the media to call delete
+        //     // return ['file://${result.path}'];
+        //   } else if (result is FilePickerResult) {
+        //     String? submitId = await storage.read(key: 'submitId');
+        //     DBHelper dbHelper = DBHelper();
+        //     final paths = result.paths;
+        //     // .where((e) => e != null)
+        //     // .map((e) => 'file://${e!}')
+        //     // .toList();
+        //     final intsub = int.parse(submitId!);
+        //     for (var path in paths) {
+        //       try {
+        //         await dbHelper.insertProject(intsub!, path!, 0);
+        //         await copyFilesToFolder(submitId!, [path].toList());
+        //       } catch (e) {
+        //         print("canot cuz $e");
+        //       }
+        //     }
+        //     // try {
+
+        //     // } catch (e) {
+        //     //   print(e);
+        //     // }
+
+        //     // bool isAllSent = false;
+        //     // //we must insure we send the media to call delete
+        //     // for (var i = 0; i < paths.length; i++) {
+        //     //   final isSent =
+        //     //       await UploadDocs(tokener.value!, submitId, paths[i]);
+        //     //   if (isSent == true) {
+        //     //     continue;
+        //     //   }
+        //     //   if (i == paths.length) {
+        //     //     isAllSent = true;
+        //     //   }
+        //     // }
+
+        //     // if (isAllSent) {
+        //     //   dbHelper.deleteProject(int.parse(submitId!));
+        //     //   deleteInvalidDirectories();
+        //     // }
+
+        //     // return result.paths
+        //     //     .where((e) => e != null)
+        //     //     .map((e) => 'file://${e!}')
+        //     //     .toList();
+        //   } else {
+        //     // return ['file://${result}'];
+        //   }
+        // }
         if (decodedData['type'] == "functionality" &&
             decodedData['value'] == "successLogin") {
           await storage.write(key: 'token', value: tokener.value);
@@ -320,27 +497,74 @@ class _WebViewState extends State<WebView> {
       },
     );
 
-    if (controller.platform is AndroidWebViewController) {
-      (controller.platform as AndroidWebViewController).setOnShowFileSelector(
-        (FileSelectorParams params) async {
-          final result = await showDialog(
-            context: context,
-            builder: (BuildContext context) => const FileCamPicker(),
-          );
+    // if (controller.platform is AndroidWebViewController
+    //     //&&
+    //     //controller.platform is WebKitWebViewController
+    //     ) {
+    //   (controller.platform as AndroidWebViewController).setOnShowFileSelector(
+    //     (FileSelectorParams params) async {
+    //       final result = await showDialog(
+    //         context: context,
+    //         builder: (BuildContext context) => const FileCamPicker(),
+    //       );
 
-          if (result is PickedFile) {
-            return ['file://${result.path}'];
-          } else if (result is FilePickerResult) {
-            return result.paths
-                .where((e) => e != null)
-                .map((e) => 'file://${e!}')
-                .toList();
-          } else {
-            return ['file://${result}'];
-          }
-        },
-      );
-    }
+    //       if (result is PickedFile) {
+    //         String? submitId = await storage.read(key: 'submitId');
+    //         DBHelper dbHelper = DBHelper();
+    //         await dbHelper.insertProject(int.parse(submitId!), result.path, 0);
+    //         await copyFilesToFolder(submitId!, [result.path].toList());
+    //         // final isSent =
+    //         //     await UploadDocs(tokener.value!, submitId, result.path);
+    //         // if (isSent) {
+    //         //   dbHelper.deleteProject(int.parse(submitId!));
+    //         // }
+    //         //we must insure we send the media to call delete
+    //         return ['file://${result.path}'];
+    //       } else if (result is FilePickerResult) {
+    //         String? submitId = await storage.read(key: 'submitId');
+    //         DBHelper dbHelper = DBHelper();
+    //         final paths = result.paths
+    //             .where((e) => e != null)
+    //             .map((e) => 'file://${e!}')
+    //             .toList();
+    //         final intsub = int.parse(submitId!);
+    //         for (var path in paths) {
+    //           try {
+    //             await dbHelper.insertProject(intsub!, path, 0);
+    //           } catch (e) {
+    //             print("canot cuz $e");
+    //           }
+    //         }
+    //         await copyFilesToFolder(submitId!, paths);
+
+    //         // bool isAllSent = false;
+    //         // //we must insure we send the media to call delete
+    //         // for (var i = 0; i < paths.length; i++) {
+    //         //   final isSent =
+    //         //       await UploadDocs(tokener.value!, submitId, paths[i]);
+    //         //   if (isSent == true) {
+    //         //     continue;
+    //         //   }
+    //         //   if (i == paths.length) {
+    //         //     isAllSent = true;
+    //         //   }
+    //         // }
+
+    //         // if (isAllSent) {
+    //         //   dbHelper.deleteProject(int.parse(submitId!));
+    //         //   deleteInvalidDirectories();
+    //         // }
+
+    //         return result.paths
+    //             .where((e) => e != null)
+    //             .map((e) => 'file://${e!}')
+    //             .toList();
+    //       } else {
+    //         return ['file://${result}'];
+    //       }
+    //     },
+    //   );
+    // }
 
     _controller = controller;
   }
@@ -408,9 +632,53 @@ class _WebViewState extends State<WebView> {
       ),
     );
   }
+
+  void startResidualDocsSender() {
+    final fileUploadQueue =
+        Provider.of<FileUploadQueueProvider>(context, listen: false);
+    _timer = Timer.periodic(Duration(minutes: 2), (_) async {
+      if (!fileUploadQueue.isUploading) {
+        await residualDocsSender();
+      }
+    });
+  }
+
+  Future<void> residualDocsSender() async {
+    final fileUploadQueue =
+        Provider.of<FileUploadQueueProvider>(context, listen: false);
+
+    // if (fileUploadQueue.isUploading) {
+    //   // Files are already being uploaded, return or handle as needed
+    //   return;
+    // }
+
+    try {
+      // Your code to retrieve residual files and add them to the queue
+      // Instead of directly calling uploadDocs, add the file paths to the queue
+
+      final appDocDir = await getApplicationDocumentsDirectory();
+      final residualsDir = Directory('${appDocDir.path}/residuals');
+
+      if (await residualsDir.exists()) {
+        final List<Directory> folders =
+            residualsDir.listSync().whereType<Directory>().toList();
+
+        for (final folder in folders) {
+          final submitId = folder.path.split('/').last;
+          final files = folder.listSync().whereType<File>().toList();
+          final count = files.length;
+
+          for (final file in files) {
+            final filePath = file.path;
+            await fileUploadQueue.addToQueue(submitId, filePath, count);
+          }
+        }
+      }
+    } catch (e) {
+      print('Error sending residuals: $e');
+    }
+  }
 }
-
-
 
 //--------------------------------------------------Doc--------------------------------------------------\\
 /*

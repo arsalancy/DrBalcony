@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 final lightTheme = ThemeData.light().copyWith(
     colorScheme: const ColorScheme.light(
-      primary: Color.fromARGB(255, 18, 107, 156),
+      primary: Color.fromARGB(255, 31, 157, 174),
       secondary: Color.fromARGB(255, 6, 144, 224),
       tertiary: Color.fromARGB(255, 255, 255, 255),
       background: Color(0xffEEF1F0),
@@ -22,6 +22,10 @@ final lightTheme = ThemeData.light().copyWith(
           color: Color.fromARGB(255, 25, 122, 175),
           fontFamily: 'iransans',
         ),
+        titleSmall: TextStyle(
+            fontFamily: 'iransans',
+            fontSize: 20,
+            color: Color.fromARGB(255, 25, 122, 175)),
         displayMedium: TextStyle(
           fontSize: 13,
           color: Color.fromARGB(255, 89, 0, 0),

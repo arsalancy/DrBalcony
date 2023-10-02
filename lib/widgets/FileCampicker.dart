@@ -1,6 +1,12 @@
+import 'package:DrBalcony/provider/copyStatus_provider.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'dart:async';
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as path;
+import 'package:provider/provider.dart';
 
 class FileCamPicker extends StatelessWidget {
   const FileCamPicker({
@@ -9,40 +15,97 @@ class FileCamPicker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      title: const Text('Select an Image'),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          ListTile(
-            leading: const Icon(Icons.photo_library, color: Colors.blue),
-            title: const Text('Select from gallery'),
-            onTap: () async {
-              Navigator.pop(
-                  context,
-                  await FilePicker.platform.pickFiles(
-                    allowCompression: true,
-                    dialogTitle: "Pick your Image",
-                    allowMultiple: true,
-                    type: FileType.image,
-                  ));
-            },
-          ),
-          ListTile(
-            leading: const Icon(
-              Icons.camera_alt,
-              color: Colors.blue,
-            ),
-            title: const Text('Take a photo'),
-            onTap: () async {
-              Navigator.pop(context,
-                  await ImagePicker().getImage(source: ImageSource.camera));
-            },
-          ),
-        ],
-      ),
+    return Builder(
+      builder: (context) {
+        final copyingProcessState =
+            Provider.of<CopyingProcessState>(context, listen: true);
+        return copyingProcessState.isCopying
+            ? Center(
+                child: AlertDialog(
+                  title: Center(
+                    child: Text(
+                      'please Wait....',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                  ),
+                  //  title: CircularProgressIndicator.adaptive()
+                ),
+              )
+            : AlertDialog(
+                title: Text(
+                  'Select an Image',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ListTile(
+                      leading:
+                          const Icon(Icons.photo_library, color: Colors.blue),
+                      title: const Text('Select from gallery'),
+                      onTap: () async {
+                        copyingProcessState.startCopying();
+                        Navigator.pop(
+                            context,
+                            await FilePicker.platform.pickFiles(
+                              //   allowCompression: true,
+                              dialogTitle: "Pick your Image",
+                              allowMultiple: true,
+                              // type: FileType.image,
+                            ));
+                      },
+                    ),
+                    ListTile(
+                      leading: const Icon(
+                        Icons.camera_alt,
+                        color: Colors.blue,
+                      ),
+                      title: const Text('Take a photo'),
+                      onTap: () async {
+                        copyingProcessState.startCopying();
+                        Navigator.pop(
+                            context,
+                            await ImagePicker()
+                                .getImage(source: ImageSource.camera));
+                      },
+                    ),
+                  ],
+                ),
+              );
+      },
     );
+    // final copyState = Provider.of<CopyingProcessState>(context, listen: true);
   }
+}
+
+Future<void> copyFilesToFolder(
+    String folderName, List<String?> filePaths) async {
+  // Get the app document directory
+  Directory appDocDir = await getApplicationDocumentsDirectory();
+
+  // Create the folder with the given name
+  Directory folder =
+      Directory(path.join('${appDocDir.path}/residuals', folderName));
+
+  try {
+    if (!folder.existsSync()) {
+      folder.createSync(recursive: true);
+    }
+  } catch (e) {
+    print('Error creating folder: $e');
+  }
+  // Copy the files into the folder
+  // for (String filePath in filePaths) {
+  for (var i = 0; i < filePaths.length; i++) {
+    File file = File(filePaths[i]!);
+    //! is ezafen
+    if (file.existsSync()) {
+      String fileName = path.basename(file.path);
+      file.copySync(path.join(folder.path, fileName));
+    }
+  }
+
+  //}
 }
 // import 'dart:io';
 // import 'package:file_picker/file_picker.dart';
@@ -134,7 +197,6 @@ class FileCamPicker extends StatelessWidget {
 //   }
 // }
 
-
 //--------------------------------------------------Doc--------------------------------------------------\\
 /*
 This code defines a Flutter widget called `FileCamPicker`, which displays an `AlertDialog` with options to select an image from the gallery or take a photo using the camera.
@@ -157,4 +219,3 @@ Here's a breakdown of what the code does:
 
 The purpose of this code is to provide a reusable widget that allows users to select an image from the gallery or take a photo using the camera. It simplifies the process of handling image selection and capturing within a Flutter application by encapsulating the functionality within a single widget.
 */
-

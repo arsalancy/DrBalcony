@@ -39,8 +39,8 @@ dependencies:
   http: ^0.13.5
   dio: ^5.0.3
   #webview_flutter: ^4.0.7
-  webview_flutter: ^4.2.0
-  path_provider: ^2.0.14
+  webview_flutter: ^4.2.4
+  path_provider: ^2.1.1
   url_launcher: ^6.1.10
   uuid: ^3.0.7
   flutter_launcher_icons: ^0.13.1
@@ -61,6 +61,7 @@ dependencies:
 
   image_compare_slider: ^2.7.0
   flutter_native_image: ^0.0.6+1
+  sqflite: ^2.3.0
   
 dev_dependencies:
   flutter_test:

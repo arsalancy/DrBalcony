@@ -1,3 +1,5 @@
+import 'package:DrBalcony/provider/copyStatus_provider.dart';
+import 'package:DrBalcony/provider/upload_provider.dart';
 import 'package:DrBalcony/screens/get_start/getStart.dart';
 import 'package:DrBalcony/widgets/colors.dart';
 import 'package:DrBalcony/screens/web_view/webview.dart';
@@ -7,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:provider/provider.dart';
 
 import 'screens/login/Auth/firebase_options.dart';
 
@@ -45,16 +48,26 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      themeMode: ThemeMode.system,
-      darkTheme: darkTheme,
-      theme: lightTheme,
-      debugShowCheckedModeBanner: false,
-      title: 'DrBalcony',
-      initialRoute: '/',
-      routes: {
-        '/': (context) => initialRoute,
-      },
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<CopyingProcessState>(
+          create: (_) => CopyingProcessState(),
+        ),
+        ChangeNotifierProvider<FileUploadQueueProvider>(
+          create: (_) => FileUploadQueueProvider(),
+        )
+      ],
+      child: MaterialApp(
+        themeMode: ThemeMode.system,
+        darkTheme: lightTheme,
+        theme: lightTheme,
+        debugShowCheckedModeBanner: false,
+        title: 'DrBalcony',
+        initialRoute: '/',
+        routes: {
+          '/': (context) => initialRoute,
+        },
+      ),
     );
   }
 }

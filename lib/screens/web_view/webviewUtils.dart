@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:DrBalcony/provider/upload_provider.dart';
+import 'package:DrBalcony/repository/sqlite.dart';
 import 'package:DrBalcony/screens/get_start/getStart.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart' as ios;
@@ -8,8 +10,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 import 'package:http/http.dart' as http;
+import 'package:path/path.dart' as path;
 
 final storage = FlutterSecureStorage();
 final apiKey =
@@ -130,6 +135,82 @@ Future<bool> killToken(String token) async {
   }
   return false;
 }
+
+// Future<bool> UploadDocs(String submitId, String filePath, int count) async {
+//   final url = 'https://drbalcony.com/api/uploadDocument';
+
+//   String? token = await storage.read(key: 'token');
+//   late String base64Image;
+//   String fileExtension = path.extension(filePath);
+//   File file = File(filePath);
+//   if (file.existsSync()) {
+//     List<int> bytes = await file.readAsBytes();
+//     base64Image = base64Encode(bytes);
+//   } else {
+//     base64Image = '';
+//   }
+
+//   final headers = {
+//     'Authorization': apiKey,
+//     'token': token as String,
+//     'Content-Type': 'application/x-www-form-urlencoded',
+//   };
+//   final body = {
+//     'submitId': submitId,
+//     'File': base64Image,
+//     'ext': fileExtension,
+//     'count': count.toString()
+//   };
+
+//   final response =
+//       await http.post(Uri.parse(url), headers: headers, body: body);
+
+//   if (response.statusCode == 200) {
+//     return true;
+//   } else if (response.statusCode == 404) {
+//     DBHelper dbhelper = DBHelper();
+//     await dbhelper.deleteProject(int.parse(submitId));
+//   }
+//   print(response.reasonPhrase);
+//   return false;
+// }
+
+// Future<bool> uploadDocs(String submitId, String filePath, int count) async {
+//   final url = 'https://drbalcony.com/api/uploadDocument';
+
+//   String? token = await storage.read(key: 'token');
+//   String fileExtension = path.extension(filePath);
+//   File file = File(filePath);
+
+//   if (!file.existsSync()) {
+//     print('File does not exist');
+//     return false;
+//   }
+
+//   final headers = {
+//     'Authorization': apiKey,
+//     'token': token as String,
+//   };
+
+//   final request = http.MultipartRequest('POST', Uri.parse(url));
+//   request.headers.addAll(headers);
+//   request.fields['submitId'] = submitId;
+//   request.fields['ext'] = fileExtension;
+//   request.fields['count'] = count.toString();
+//   request.files.add(await http.MultipartFile.fromPath('File', filePath));
+
+//   final response = await request.send();
+
+//   if (response.statusCode == 200) {
+//     return true;
+//   } else if (response.statusCode == 404) {
+//     DBHelper dbhelper = DBHelper();
+//     await dbhelper.deleteProject(int.parse(submitId));
+//   }
+
+//   print(response.reasonPhrase);
+//   return false;
+// }
 
 void ShowDialogBox(BuildContext context, String res, VoidCallback onPressed,
     String title, bool cancel) {
@@ -269,8 +350,175 @@ Future<void> signOutGoogle() async {
   //googleUser.
 }
 
+void testFetchResiduals() async {
+  try {
+    final appDocDir = await getApplicationDocumentsDirectory();
+    final residualsDir = Directory('${appDocDir.path}/residuals');
 
+    if (await residualsDir.exists()) {
+      print('Fetching residuals from: ${residualsDir.path}');
 
+      final List<FileSystemEntity> residuals =
+          residualsDir.listSync(recursive: true);
+
+      for (final entity in residuals) {
+        if (entity is File) {
+          print('File: ${entity.path}');
+        } else if (entity is Directory) {
+          print('Folder: ${entity.path}');
+        }
+      }
+    } else {
+      print('Residuals folder does not exist');
+    }
+  } catch (e) {
+    print('Error fetching residuals: $e');
+  }
+}
+
+// Future<void> residualDocsSender() async {
+//   String? token = await storage.read(key: 'token');
+//   try {
+//     final appDocDir = await getApplicationDocumentsDirectory();
+//     final residualsDir = Directory('${appDocDir.path}/residuals');
+
+//     if (await residualsDir.exists()) {
+//       final List<Directory> folders =
+//           residualsDir.listSync().whereType<Directory>().toList();
+
+//       for (final folder in folders) {
+//         print('Folder path: ${folder.path}');
+//         final submitId = folder.path.split('/').last;
+//         final files = folder.listSync().whereType<File>().toList();
+//         final List<String> folderFilePaths =
+//             files.map((file) => file.path).toList();
+//         DBHelper dbHelper = DBHelper();
+//         bool isAllSent = true; // Initialize to true
+
+//         for (var i = 0; i < folderFilePaths.length; i++) {
+//           final isSent = await uploadDocs(
+//               submitId, folderFilePaths[i], folderFilePaths.length);
+//           if (!isSent) {
+//             isAllSent = false; // Mark as false if any file is not sent
+//           }
+//         }
+
+//         if (isAllSent) {
+//           dbHelper.deleteProject(int.parse(submitId));
+//           deleteInvalidDirectories();
+//         }
+//       }
+//     }
+//   } catch (e) {
+//     print('Error sending residuals: $e');
+//   }
+// }
+// Future<void> residualDocsSender() async {
+//   String? token = await storage.read(key: 'token');
+//   try {
+//     final appDocDir = await getApplicationDocumentsDirectory();
+//     final residualsDir = Directory('${appDocDir.path}/residuals');
+
+//     if (await residualsDir.exists()) {
+//       final List<Directory> folders =
+//           residualsDir.listSync().whereType<Directory>().toList();
+
+//       for (final folder in folders) {
+//         print('Folder path: ${folder.path}');
+//         final submitId = folder.path.split('/').last;
+//         final files = folder.listSync().whereType<File>().toList();
+//         // try {
+//         //  // files = folder.listSync().whereType<File>().toList();
+
+//         // } catch (e) {
+//         //   print(e);
+//         // }
+//         final List<String> folderFilePaths =
+//             files!.map((file) => file.path).toList();
+//         DBHelper dbHelper = DBHelper();
+//         bool isAllSent = false;
+//         // for (var folderfile in folderFilePaths) {
+//         //   await UploadDocs(token, submitId, folderfile);
+//         // }
+//         for (var i = 0; i < folderFilePaths.length; i++) {
+//           final isSent = await UploadDocs(submitId, folderFilePaths[i]);
+//           if (isSent == true) {
+//             continue;
+//           }
+//           if (i == folderFilePaths.length) {
+//             isAllSent = true;
+//           }
+//           if (isAllSent) {
+//             dbHelper.deleteProject(int.parse(submitId!));
+//             deleteInvalidDirectories();
+//           }
+//         }
+//       }
+//     }
+//   } catch (e) {
+//     print('Error sending residuals: $e');
+//   }
+// }
+
+Future<void> deleteInvalidDirectories() async {
+  // Retrieve project IDs from the database
+  DBHelper dbhelper = DBHelper();
+  List<Map<String, dynamic>> projects = await dbhelper.getAllProjects();
+
+  // Get the residuals directory
+  final appDocDir = await getApplicationDocumentsDirectory();
+  final residualsDir = Directory('${appDocDir.path}/residuals');
+
+  // Get the list of directories inside the residuals directory
+  if (residualsDir.existsSync()) {
+    List<Directory> directories =
+        residualsDir.listSync().whereType<Directory>().toList();
+
+    // Iterate over the directories and delete the invalid ones
+    for (Directory directory in directories) {
+      String directoryName = path.basename(directory.path);
+      int? directoryId = int.tryParse(directoryName);
+
+      // Check if the directory name is a valid ID and if it exists in the projects list
+      if (directoryId != null &&
+          !projects.any((project) => project['id'] == directoryId)) {
+        await directory.delete(recursive: true);
+        print('Deleted directory: $directoryName');
+      }
+    }
+  }
+}
+
+Future<void> deleteSpecificDirectory(String submitId) async {
+  // Retrieve project IDs from the database
+  // DBHelper dbhelper = DBHelper();
+  // List<Map<String, dynamic>> projects = await dbhelper.getAllProjects();
+
+  // Get the residuals directory
+  final appDocDir = await getApplicationDocumentsDirectory();
+  final residualsDir = Directory('${appDocDir.path}/residuals');
+
+  // Get the list of directories inside the residuals directory
+  if (residualsDir.existsSync()) {
+    List<Directory> directories =
+        residualsDir.listSync().whereType<Directory>().toList();
+
+    // Iterate over the directories and delete the invalid ones
+    for (Directory directory in directories) {
+      String directoryName = path.basename(directory.path);
+      // int? directoryId = int.tryParse(directoryName);
+
+      // Check if the directory name is a valid ID and if it exists in the projects list
+      // if (directoryId != null &&
+      //     !projects.any((project) => project['id'] == directoryId)) {
+      if (directoryName == submitId) {
+        await directory.delete(recursive: true);
+      }
+      print('Deleted directory: $directoryName');
+    }
+  }
+  //}
+}
 
 //--------------------------------------------------Doc--------------------------------------------------\\
 /*
@@ -303,3 +551,8 @@ The provided code is a Dart code snippet that includes various imports and funct
 
 The code seems to be related to authentication and user management, including features such as internet connectivity checks, API requests for authentication, password recovery, token management, and Google sign-in/sign-out functionality.
 */
+
+
+
+
+//I have a floater application and I want to implement a provider that holds a Queue and this Queue is always ready for service meaning if I add something to this Queue list it's going to do this task for each item in the Queue . this method is my task and it looks inside residual and send everything inside it.
