@@ -1,0 +1,12 @@
+App Store Connect API key name
+
+codemagic2
+Issuer ID
+
+d9c002d3-62cc-496c-ba12-23cb70dc6e5e
+Key ID
+
+LQ6W3ALR5V
+API key
+
+AuthKey_LQ6W3ALR5V.p8
